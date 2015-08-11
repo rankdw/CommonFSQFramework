@@ -964,7 +964,7 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
 	binFour = "_b4"
         genPrefix = "GEN_"
 
-        ETAMAX = 2.0
+        ETAMAX = 0.8
 	isData = True
 
 	nEventsVTX1Name = histPrefix+"nEventsVTX1"
@@ -1888,12 +1888,12 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
 
 
 		#THIS IS HERE TO TEST DIEGO'S NEW LOW PU SKIM!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		if self.fChain.lumi < 90: continue
+		if self.fChain.lumi < 90 or self.fChain.trgZeroBias == 0: continue
 
                 for i in range (0, self.fChain.vtxisFake.size() ):
                     vtxrho = math.sqrt( self.fChain.vtxx.at(i)**2 + self.fChain.vtxy.at(i)**2 )
 		    l_vertexNotFake.append( not self.fChain.vtxisFake.at(i) )
-		    l_vertexInTen.append( math.fabs(self.fChain.vtxz.at(i)) <= 10 )
+		    l_vertexInTen.append( math.fabs( self.fChain.vtxz.at(i) - self.fChain.vtxzBS.at(i) ) <= 10 )
 		    l_vertexNdof.append( self.fChain.vtxndof.at(i) > 4 )
 		    l_vertexRho.append( vtxrho <= 2 )
 		    l_vertexZ.append(self.fChain.vtxz.at(i))
@@ -1915,10 +1915,10 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
 			#if iFirstGoodVertex == -1: iFirstGoodVertex = i
 
                 for i in range (0, self.fChain.vtxisFake.size() ):
-		    if l_vertexGood[i] == 0: continue
+		    #if l_vertexGood[i] == 0: continue
 		    if i != 0:
 			self.hist[delzVtxName].Fill( math.fabs(l_vertexZ[0] - l_vertexZ[i]) )
-		    if iValid != -1:
+		    if iValid != -1 and i != iValid:
 			self.hist[delzVtxVTXName].Fill( math.fabs(l_vertexZ[iValid] - l_vertexZ[i]) )
 
 
@@ -1929,8 +1929,8 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
 		if nGood != 1: vertexGood = False
 
 		#print "vertexGood, nGood", vertexGood, nGood
-		if vertexGood: self.hist[nVtxVTXName].Fill(nGood, weight)
-		#if nGood >= 1: self.hist[nVtxVTXName].Fill(nGood, weight)
+		#if vertexGood: self.hist[nVtxVTXName].Fill(nGood, weight)
+		if nGood >= 1: self.hist[nVtxVTXName].Fill(nGood, weight)
 
 		if nSingle != 1: vertexSingle = False
 
@@ -1958,8 +1958,8 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
 		#print "nGood =", nGood
 		#Checking if there is a single vertex will greatly speed up the analysis.  Disabled in order to analyze multiple vertices.
 		#if (vertexSingle):
-		#if (iValid != -1):       #At least one good vertex 
-		if (nGood == 1):         #One and only one good vertex
+		if (iValid != -1):       #At least one good vertex 
+		#if (nGood == 1):         #One and only one good vertex
 		    #print "nGood =", nGood, "after iValid check, which is", iValid
                     for i_track, track in enumerate(self.tracks.get(variation)):
                         #if firstTime == False: i_track += 1
@@ -2798,7 +2798,7 @@ if __name__ == "__main__":
                                maxFilesMC = maxFilesMC,
                                maxFilesData = maxFilesData,
                                nWorkers=nWorkers,
-                               outFile = "DATAv4_8-3-15_eta20_vtxs.root" )
+                               outFile = "DATA_8-10-15_eta08_vtxs.root" )
 
 
 
