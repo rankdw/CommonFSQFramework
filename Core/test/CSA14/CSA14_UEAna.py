@@ -1256,15 +1256,15 @@ if __name__ == "__main__":
 
     #sampleList.append("QCD_Pt-15to3000_TuneZ2star_Flat_HFshowerLibrary_7TeV_pythia6")
 
-    maxFilesMC = 1
+    maxFilesMC = 30
 
-    maxFilesData = 1
+    maxFilesData = 30
 
     #nWorkers = 16
 
     #maxFilesData = 1
 
-    nWorkers = 4
+    #nWorkers = 20
 
     # '''
 
@@ -1294,4 +1294,4 @@ if __name__ == "__main__":
 
                                nWorkers=nWorkers,
 
-                               outFile = "plotsCSA14_UEAna.root" )
+                               outFile = "plotsCSA14_UEAna_Diego.root" )
