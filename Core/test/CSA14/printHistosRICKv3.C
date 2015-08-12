@@ -40,7 +40,8 @@
 
 	void printHistosRICKv3 ()
 	{
-	char* rootFile = "plots_GENforPAPER_eta20_6-29-15.root";
+	//char* rootFile = "plots_GENforPAPER_eta20_6-29-15.root";
+	char* rootFile = "plotsPaperGEN_eta20.root";
 	//char* curvesCSVfile = "Tune_CUETP8M1_PTmax_Eta20.csv";
 	char* curvesCSVfile2 = "Tune_Monash_PTmax_Eta20.csv";
 	char* curvesCSVfile = "Tune_CUETP8M1_PTmax_Eta20.csv";
@@ -49,6 +50,7 @@
 	TFile *fhist = new TFile(rootFile);
 
 	double etaCut = 2.0;
+	//double etaCut = 0.8;
 	double scaleTotal = 1/(2*3.14159*2*etaCut); 
 	double scaleThird  = 3/(2*3.14159*2*etaCut);
 	double scaleSixth = 6/(2*3.14159*2*etaCut);
@@ -277,25 +279,25 @@ for (unsigned int i = 0; i < 17; i++)
     CURVE2[i]->Draw("c same");
     leg->Draw();
 
-    if (i==0): c1->SaveAs("curvePlots/Nch_Total.png");
-    if (i==1): c1->SaveAs("curvePlots/Nch_Assoc.png");
-    if (i==2): c1->SaveAs("curvePlots/Nch_Toward.png");
-    if (i==3): c1->SaveAs("curvePlots/Nch_Away.png");
-    if (i==4): c1->SaveAs("curvePlots/Nch_TransAVE.png");
-    if (i==5): c1->SaveAs("curvePlots/Nch_TransMAX.png");
-    if (i==6): c1->SaveAs("curvePlots/Nch_TransMIN.png");
-    if (i==7): c1->SaveAs("curvePlots/Nch_TransDIF.png");
+    if (i==0): c1->SaveAs("curvePlots2/Nch_Total.png");
+    if (i==1): c1->SaveAs("curvePlots2/Nch_Assoc.png");
+    if (i==2): c1->SaveAs("curvePlots2/Nch_Toward.png");
+    if (i==3): c1->SaveAs("curvePlots2/Nch_Away.png");
+    if (i==4): c1->SaveAs("curvePlots2/Nch_TransAVE.png");
+    if (i==5): c1->SaveAs("curvePlots2/Nch_TransMAX.png");
+    if (i==6): c1->SaveAs("curvePlots2/Nch_TransMIN.png");
+    if (i==7): c1->SaveAs("curvePlots2/Nch_TransDIF.png");
 
-    if (i==8): c1->SaveAs("curvePlots/PtSum_Total.png");
-    if (i==9): c1->SaveAs("curvePlots/PtSum_Assoc.png");
-    if (i==10): c1->SaveAs("curvePlots/PtSum_Toward.png");
-    if (i==11): c1->SaveAs("curvePlots/PtSum_Away.png");
-    if (i==12): c1->SaveAs("curvePlots/PtSum_TransAVE.png");
-    if (i==13): c1->SaveAs("curvePlots/PtSum_TransMAX.png");
-    if (i==14): c1->SaveAs("curvePlots/PtSum_TransMIN.png");
-    if (i==15): c1->SaveAs("curvePlots/PtSum_TransDIF.png");
+    if (i==8): c1->SaveAs("curvePlots2/PtSum_Total.png");
+    if (i==9): c1->SaveAs("curvePlots2/PtSum_Assoc.png");
+    if (i==10): c1->SaveAs("curvePlots2/PtSum_Toward.png");
+    if (i==11): c1->SaveAs("curvePlots2/PtSum_Away.png");
+    if (i==12): c1->SaveAs("curvePlots2/PtSum_TransAVE.png");
+    if (i==13): c1->SaveAs("curvePlots2/PtSum_TransMAX.png");
+    if (i==14): c1->SaveAs("curvePlots2/PtSum_TransMIN.png");
+    if (i==15): c1->SaveAs("curvePlots2/PtSum_TransDIF.png");
 
-    if (i==16): c1->SaveAs("curvePlots/PtAve_Trans.png");
+    if (i==16): c1->SaveAs("curvePlots2/PtAve_Trans.png");
 
 
 }
@@ -324,7 +326,6 @@ for (unsigned int i = 0; i < 17; i++)
         GEN[i]->SetYTitle("dN/d#etad#phi");
         GEN2[i]->SetYTitle("dN/d#etad#phi");
     }
-
     else if (i == 16)
     {
         GEN[i]->SetYTitle("<p_{T}> (GeV/C)");
@@ -335,8 +336,6 @@ for (unsigned int i = 0; i < 17; i++)
         GEN[i]->SetYTitle("<#sump_{T}/d#etad#phi");
         GEN2[i]->SetYTitle("<#sump_{T}/d#etad#phi");
     }
-
-
     //Set Y ranges
     if (i < 8)
     {
@@ -353,7 +352,6 @@ for (unsigned int i = 0; i < 17; i++)
         GEN[i]->SetAxisRange(0,4,"Y");
         GEN2[i]->SetAxisRange(0,4,"Y");
     }
-
     //Scale Plots if not already done
     if ( (i == 1) || (i == 8) )
     {
@@ -370,7 +368,6 @@ for (unsigned int i = 0; i < 17; i++)
         GEN[i]->Scale(scaleSixth);
         GEN2[i]->Scale(scaleSixth);
     }
-
 }
 */
 
@@ -387,7 +384,6 @@ for (unsigned int i = 0; i < 17 < i++)
     GEN[i]->Draw();
     CURVE[i]->Draw("c same");
     leg->Draw();
-
     if (i==0): c1->SaveAs("curvePlots/Nch_Total.png");
     if (i==1): c1->SaveAs("curvePlots/Nch_Assoc.png");
     if (i==2): c1->SaveAs("curvePlots/Nch_Toward.png");
@@ -396,7 +392,6 @@ for (unsigned int i = 0; i < 17 < i++)
     if (i==5): c1->SaveAs("curvePlots/Nch_TransMAX.png");
     if (i==6): c1->SaveAs("curvePlots/Nch_TransMIN.png");
     if (i==7): c1->SaveAs("curvePlots/Nch_TransDIF.png");
-
     if (i==8): c1->SaveAs("curvePlots/PtSum_Total.png");
     if (i==9): c1->SaveAs("curvePlots/PtSum_Assoc.png");
     if (i==10): c1->SaveAs("curvePlots/PtSum_Toward.png");
@@ -405,10 +400,7 @@ for (unsigned int i = 0; i < 17 < i++)
     if (i==13): c1->SaveAs("curvePlots/PtSum_TransMAX.png");
     if (i==14): c1->SaveAs("curvePlots/PtSum_TransMIN.png");
     if (i==15): c1->SaveAs("curvePlots/PtSum_TransDIF.png");
-
     if (i==16): c1->SaveAs("curvePlots/PtAve_Trans.png");
-
-
 }
 */
 
@@ -448,99 +440,67 @@ GEN_overallTotalNch_bh->Scale(scaleTotal);
 GEN_overallTotalNch_bh->Draw();
 GEN_overallTotalNch_bh->SetXTitle("p_{T} max (GeV/C)");
 GEN_overallTotalNch_bh->SetYTitle("dN/d#etad#phi");
-
 leg = new TLegend(0.4,0.6,0.89,0.89);
 leg->AddEntry(Curve_Nch_Total,"Monash","l");
 //leg->AddEntry(fun3,"CUETP1M8","l");
 leg->AddEntry(GEN_overallTotalNch_bh,"Data");
 leg->SetHeader("MC/data comparison");
 leg->Draw();
-
 Curve_Nch_Total->SetLineColor(2);
 Curve_Nch_Total->Draw("c same");
 c1->SaveAs("curvePlots/Nch_Total.png");
-
-
 GEN_towardNch_bh->Scale(scaleThird);
 GEN_towardNch_bh->Draw();
 Curve_Nch_Toward->Draw("c same");
 c1->SaveAs("curvePlots/Nch_Toward.png");
-
-
 GEN_awayNch_bh->Scale(scaleThird);
 GEN_awayNch_bh->Draw();
 Curve_Nch_Away->Draw("c same");
 c1->SaveAs("curvePlots/Nch_Away.png");
-
-
 GEN_transNch_bh->Scale(scaleThird);
 GEN_transNch_bh->Draw();
 Curve_Nch_TransAVE->Draw("c same");
 c1->SaveAs("curvePlots/Nch_TransAVE.png");
-
-
 GEN_transMaxNch_bh->Scale(scaleSixth);
 GEN_transMaxNch_bh->Draw();
 Curve_Nch_TransMAX->Draw("c same");
 c1->SaveAs("curvePlots/Nch_TransMAX.png");
-
-
 GEN_transMinNch_bh->Scale(scaleSixth);
 GEN_transMinNch_bh->Draw();
 Curve_Nch_TransMIN->Draw("c same");
 c1->SaveAs("curvePlots/Nch_TransMIN.png");
-
-
 GEN_transDifNch_bh->Scale(scaleSixth);
 GEN_transDifNch_bh->Draw();
 Curve_Nch_TransDIF->Draw("c same");
 c1->SaveAs("curvePlots/Nch_TransDIF.png");
-
-
-
-
 GEN_overallTotal_bh->Scale(scaleTotal);
 GEN_overallTotal_bh->Draw();
 Curve_PtSum_Total->Draw("c same");
 c1->SaveAs("curvePlots/PtSum_Total.png");
-
-
 GEN_toward_bh->Scale(scaleThird);
 GEN_toward_bh->Draw();
 Curve_PtSum_Toward->Draw("c same");
 c1->SaveAs("curvePlots/PtSum_Toward.png");
-
-
 GEN_away_bh->Scale(scaleThird);
 GEN_away_bh->Draw();
 Curve_PtSum_Away->Draw("c same");
 c1->SaveAs("curvePlots/PtSum_Away.png");
-
-
 GEN_trans_bh->Scale(scaleThird);
 GEN_trans_bh->Draw();
 Curve_PtSum_TransAVE->Draw("c same");
 c1->SaveAs("curvePlots/PtSum_TransAVE.png");
-
-
 GEN_transMax_bh->Scale(scaleSixth);
 GEN_transMax_bh->Draw();
 Curve_PtSum_TransMAX->Draw("c same");
 c1->SaveAs("curvePlots/PtSum_TransMAX.png");
-
-
 GEN_transMin_bh->Scale(scaleSixth);
 GEN_transMin_bh->Draw();
 Curve_PtSum_TransMIN->Draw("c same");
 c1->SaveAs("curvePlots/PtSum_TransMIN.png");
-
-
 GEN_transDif_bh->Scale(scaleSixth);
 GEN_transDif_bh->Draw();
 Curve_PtSum_TransDIF->Draw("c same");
 c1->SaveAs("curvePlots/PtSum_TransDIF.png");
-
-
 GEN_transAvg_bh->Draw();
 Curve_PtAve_Trans->Draw("c same");
 c1->SaveAs("curvePlots/PtAve_Trans.png");
@@ -548,19 +508,3 @@ c1->SaveAs("curvePlots/PtAve_Trans.png");
 	cout << "Out files written" << endl;
 	fhist->Close();
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
