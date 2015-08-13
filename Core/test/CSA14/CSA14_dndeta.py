@@ -1396,7 +1396,7 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
 
 
 
-        self.eventCounter += 1
+        #self.eventCounter += 1
 
         self.tracks.newEvent(self.fChain)
 
@@ -1869,7 +1869,8 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
                 vertexGood = True
 
 		vertexTwo = True
-
+		
+		#Not implemented yet
 		ONE_GOOD_VERTEX_MODE = True
 
 		l_vertexNotFake = []
@@ -2667,34 +2668,21 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
 	"""
 	
         unfoldStartTime = time.time()
-
         #self.Nch_unfold = RooUnfoldBayes(self.Nch_response, self.hist["HIST_nchMB"], 4);
         self.Nch_RECO = self.Nch_unfold.Hreco();
         self.GetOutputList().Add(self.Nch_RECO);
-
-
         #self.transNch_unfold = RooUnfoldBayes(self.transNch_response, self.hist["2DHIST_transNchName_bh"], 2);
         self.transNch_RECO = self.transNch_unfold.Hreco();
         self.GetOutputList().Add(self.transNch_RECO);
-
-
         unfoldEndTime = time.time()
-
         unfoldTime = unfoldEndTime - unfoldStartTime
-
         print "Unfolding transNch took %d seconds." % unfoldTime
-
         unfoldStartTime = time.time()
-
         self.trans_unfold = RooUnfoldBayes(self.trans_response, self.hist["2DHIST_transName_bh"], 2);
         self.trans_RECO = self.trans_unfold.Hreco();
         self.GetOutputList().Add(self.trans_RECO);
-
-
         unfoldEndTime = time.time()
-
         unfoldTime = unfoldEndTime - unfoldStartTime
-
         print "Unfolding trans took %d seconds." % unfoldTime
 	
 	"""
@@ -2715,7 +2703,6 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
         self.trans_unfold = RooUnfoldBayes(self.trans_response, self.hist["trans_bh"], 4);
         self.trans_RECO = self.trans_unfold.Hreco();
         self.GetOutputList().Add(self.trans_RECO);
-
         self.transNch_unfold = RooUnfoldBayes(self.transNch_response, self.hist["transNch_bh"], 4);
         self.transNch_RECO = self.transNch_unfold.Hreco();
         self.GetOutputList().Add(self.transNch_RECO);
@@ -2798,7 +2785,7 @@ if __name__ == "__main__":
                                maxFilesMC = maxFilesMC,
                                maxFilesData = maxFilesData,
                                nWorkers=nWorkers,
-                               outFile = "DATA_8-10-15_eta08_vtxs.root" )
+                               outFile = "DATA_8-13-15_eta20_vtxs.root" )
 
 
 
