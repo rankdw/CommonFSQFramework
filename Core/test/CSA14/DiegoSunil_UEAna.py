@@ -7,13 +7,100 @@ sys.path.append(os.path.dirname(__file__))
 import ROOT
 ROOT.gROOT.SetBatch(True)
 from ROOT import edm, JetCorrectionUncertainty
-
+from ROOT import TFile, TChain, TTree,TH1,TH2
 
 from array import *
+from array import array
+
+import time
+start = time.clock()
 
 p1="_post"
 
-class Diego_UEAna(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader):
+#SUNIL
+outfile = TFile("outputFile.root","recreate")
+tree = ROOT.TTree("tree","ueAnalysis")
+
+bRec_nChg_pTLeadTrack_away = array("f",[0])
+bRec_nChg_pTLeadTrack_towards = array("f",[0])
+bRec_nChg_pTLeadTrack_trans = array("f",[0])
+bRec_nChg_pTLeadTrack_transMin = array("f",[0])
+bRec_nChg_pTLeadTrack_transMax = array("f",[0])
+bRec_nChg_pTLeadTrack_transDiff = array("f",[0])
+bRec_pTSum_pTLeadTrack_away = array("f",[0])
+bRec_pTSum_pTLeadTrack_towards = array("f",[0])
+bRec_pTSum_pTLeadTrack_trans = array("f",[0])
+bRec_pTSum_pTLeadTrack_transMin = array("f",[0])
+bRec_pTSum_pTLeadTrack_transMax = array("f",[0])
+bRec_pTSum_pTLeadTrack_transDiff = array("f",[0])
+bRec_pTLeadTrack = array("f",[0])
+bRec_etaLeadTrack = array("f",[0])
+bRec_phiLeadTrack = array("f",[0])
+
+bRec_evtTrue_LeadTrack = array("f",[0]) 
+
+bGen_nChg_pTLeadTrack_away = array("f",[0])
+bGen_nChg_pTLeadTrack_towards = array("f",[0])
+bGen_nChg_pTLeadTrack_trans = array("f",[0])
+bGen_nChg_pTLeadTrack_transMin = array("f",[0])
+bGen_nChg_pTLeadTrack_transMax = array("f",[0])
+bGen_nChg_pTLeadTrack_transDiff = array("f",[0])
+bGen_pTSum_pTLeadTrack_away = array("f",[0])
+bGen_pTSum_pTLeadTrack_towards = array("f",[0])
+bGen_pTSum_pTLeadTrack_trans = array("f",[0])
+bGen_pTSum_pTLeadTrack_transMin = array("f",[0])
+bGen_pTSum_pTLeadTrack_transMax = array("f",[0])
+bGen_pTSum_pTLeadTrack_transDiff = array("f",[0])
+bGen_pTLeadTrack = array("f",[0])
+bGen_etaLeadTrack = array("f",[0])
+bGen_phiLeadTrack = array("f",[0])
+
+bGen_evtTrue_LeadTrack = array("f",[0])
+
+
+tree.Branch('bRec_pTLeadTrack',   bRec_pTLeadTrack,'bRec_pTLeadTrack/F')
+tree.Branch('bRec_etaLeadTrack',   bRec_etaLeadTrack,'bRec_etaLeadTrack/F')
+tree.Branch('bRec_phiLeadTrack',   bRec_phiLeadTrack,'bRec_phiLeadTrack/F')
+
+tree.Branch('bRec_evtTrue_LeadTrack',   bRec_evtTrue_LeadTrack,'bRec_evtTrue_LeadTrack/F')
+tree.Branch('bGen_evtTrue_LeadTrack',   bGen_evtTrue_LeadTrack,'bGen_evtTrue_LeadTrack/F')
+
+tree.Branch('bGen_pTLeadTrack',   bGen_pTLeadTrack,'bGen_pTLeadTrack/F')
+tree.Branch('bGen_etaLeadTrack',   bGen_etaLeadTrack,'bGen_etaLeadTrack/F')
+tree.Branch('bGen_phiLeadTrack',   bGen_phiLeadTrack,'bGen_phiLeadTrack/F')
+
+tree.Branch('bRec_nChg_pTLeadTrack_away',   bRec_nChg_pTLeadTrack_away,'bRec_nChg_pTLeadTrack_away/F')
+tree.Branch('bRec_nChg_pTLeadTrack_towards',   bRec_nChg_pTLeadTrack_towards,'bRec_nChg_pTLeadTrack_towards/F')
+tree.Branch('bRec_nChg_pTLeadTrack_trans',   bRec_nChg_pTLeadTrack_trans,'bRec_nChg_pTLeadTrack_trans/F')
+tree.Branch('bRec_nChg_pTLeadTrack_transMin',   bRec_nChg_pTLeadTrack_transMin,'bRec_nChg_pTLeadTrack_transMin/F')
+tree.Branch('bRec_nChg_pTLeadTrack_transMax',   bRec_nChg_pTLeadTrack_transMax,'bRec_nChg_pTLeadTrack_transMax/F')
+tree.Branch('bRec_nChg_pTLeadTrack_transDiff',   bRec_nChg_pTLeadTrack_transDiff,'bRec_nChg_pTLeadTrack_transDiff/F')
+tree.Branch('bRec_pTSum_pTLeadTrack_away',   bRec_pTSum_pTLeadTrack_away,'bRec_pTSum_pTLeadTrack_away/F')
+tree.Branch('bRec_pTSum_pTLeadTrack_towards',   bRec_pTSum_pTLeadTrack_towards,'bRec_pTSum_pTLeadTrack_towards/F')
+tree.Branch('bRec_pTSum_pTLeadTrack_trans',   bRec_pTSum_pTLeadTrack_trans,'bRec_pTSum_pTLeadTrack_trans/F')
+tree.Branch('bRec_pTSum_pTLeadTrack_transMin',   bRec_pTSum_pTLeadTrack_transMin,'bRec_pTSum_pTLeadTrack_transMin/F')
+tree.Branch('bRec_pTSum_pTLeadTrack_transMax',   bRec_pTSum_pTLeadTrack_transMax,'bRec_pTSum_pTLeadTrack_transMax/F')
+tree.Branch('bRec_pTSum_pTLeadTrack_transDiff',   bRec_pTSum_pTLeadTrack_transDiff,'bRec_pTSum_pTLeadTrack_transDiff/F')
+
+tree.Branch('bGen_nChg_pTLeadTrack_away',   bGen_nChg_pTLeadTrack_away,'bGen_nChg_pTLeadTrack_away/F')
+tree.Branch('bGen_nChg_pTLeadTrack_towards',   bGen_nChg_pTLeadTrack_towards,'bGen_nChg_pTLeadTrack_towards/F')
+tree.Branch('bGen_nChg_pTLeadTrack_trans',   bGen_nChg_pTLeadTrack_trans,'bGen_nChg_pTLeadTrack_trans/F')
+tree.Branch('bGen_nChg_pTLeadTrack_transMin',   bGen_nChg_pTLeadTrack_transMin,'bGen_nChg_pTLeadTrack_transMin/F')
+tree.Branch('bGen_nChg_pTLeadTrack_transMax',   bGen_nChg_pTLeadTrack_transMax,'bGen_nChg_pTLeadTrack_transMax/F')
+tree.Branch('bGen_nChg_pTLeadTrack_transDiff',   bGen_nChg_pTLeadTrack_transDiff,'bGen_nChg_pTLeadTrack_transDiff/F')
+tree.Branch('bGen_pTSum_pTLeadTrack_away',   bGen_pTSum_pTLeadTrack_away,'bGen_pTSum_pTLeadTrack_away/F')
+tree.Branch('bGen_pTSum_pTLeadTrack_towards',   bGen_pTSum_pTLeadTrack_towards,'bGen_pTSum_pTLeadTrack_towards/F')
+tree.Branch('bGen_pTSum_pTLeadTrack_trans',   bGen_pTSum_pTLeadTrack_trans,'bGen_pTSum_pTLeadTrack_trans/F')
+tree.Branch('bGen_pTSum_pTLeadTrack_transMin',   bGen_pTSum_pTLeadTrack_transMin,'bGen_pTSum_pTLeadTrack_transMin/F')
+tree.Branch('bGen_pTSum_pTLeadTrack_transMax',   bGen_pTSum_pTLeadTrack_transMax,'bGen_pTSum_pTLeadTrack_transMax/F')
+tree.Branch('bGen_pTSum_pTLeadTrack_transDiff',   bGen_pTSum_pTLeadTrack_transDiff,'bGen_pTSum_pTLeadTrack_transDiff/F')
+#END SUNIL
+
+#DR: I think these will not be needed in the CFW
+#fchain = TChain("UETree/data")
+#inputFile
+
+class DiegoSunil_UEAna(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader):
     def init( self):
 
         self.jetMode = False #DR
@@ -305,7 +392,7 @@ class Diego_UEAna(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader)
                     vtxrho = math.sqrt(self.fChain.vtxx.at(i)*self.fChain.vtxx.at(i) + self.fChain.vtxy.at(i)*self.fChain.vtxy.at(i))
 
 		    nu=nu+1	
-                    if not self.fChain.vtxisFake.at(i) and abs(self.fChain.vtxz.at(i) - self.fChain.vtxzBS.at(i)) <= 10 and self.fChain.vtxndof.at(i) > 4 and vtxrho <= 2: # count only good primary vertices
+                    if not self.fChain.vtxisFake.at(i) and abs(self.fChain.vtxz.at(i)) <= 10 and self.fChain.vtxndof.at(i) > 4 and vtxrho <= 2: # count only good primary vertices
                         numgoodvtx+=1
 			if numgoodvtx==1:
 			 vtx_x=self.fChain.vtxx.at(i)
@@ -425,11 +512,13 @@ class Diego_UEAna(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader)
                         
 
         #END LEADING OBJECT LOOP
-           
+
+        bRec_pTLeadTrack[0] = ptf #SUNIL
+
 	self.hist_full_jet["f_ptSisCone5"].Fill(ptf)
         self.hist_full_jet["f_phiSisCone5"].Fill(phif)
         self.hist_full_jet["f_etaSisCone5"].Fill(etaf)
-        if numgoodvtx >= 1:
+        if numgoodvtx == 1:
             iptf = -1
             ptf = 0
             ###
@@ -636,9 +725,17 @@ class Diego_UEAna(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader)
                  self.hist_away["ptAway_SisCone5"].Fill(sumpt_away,ptf)
 		 self.Trans_SisCon5["ptAway"].Fill(ptf,sumpt_away)	
 
+                 #print "Hopefully filling tree with ptMax", ptf
+                 tree.Fill()
+
+                 outfile.Write()
         return 1
 
     def finalize(self):
+        outfile.Write()
+        outfile.Close()      
+        end = time.clock()
+
         print "Finalize:"
         normFactor = self.getNormalizationFactor()
         print "  applying norm", normFactor
@@ -654,6 +751,14 @@ class Diego_UEAna(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader)
         for h in self.hist:
             self.hist[h].Scale(normFactor)
         """
+
+    def finalizeWhenMerged(self):
+        #
+        # you can save further histograms to the output file by calling:
+        #self.GetOutputList().Add(myNewHisto)
+        #
+        pass
+
 if __name__ == "__main__":
     sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
     ROOT.gSystem.Load("libFWCoreFWLite.so")
@@ -669,10 +774,10 @@ if __name__ == "__main__":
     # Run printTTree.py alone to get the samples list
     #sampleList = []
     #sampleList.append("QCD_Pt-15to3000_TuneZ2star_Flat_HFshowerLibrary_7TeV_pythia6")
-    #maxFilesMC = 1
-    #maxFilesData = 1
-    #nWorkers = 1
-    maxNevents = -1
+    maxFilesMC = 1
+    maxFilesData = 1
+    nWorkers = 1
+    maxNevents = 100
     #maxFilesData = 1
     #nWorkers =12 
     # '''
@@ -683,11 +788,11 @@ if __name__ == "__main__":
 
 
     # use printTTree.py <sampleName> to see what trees are avaliable inside the skim file
-    Diego_UEAna.runAll(treeName="UETree",
+    DiegoSunil_UEAna.runAll(treeName="UETree",
                                slaveParameters=slaveParams,
                                sampleList=sampleList,
                                maxFilesMC = maxFilesMC,
                                maxFilesData = maxFilesData,
                                maxNevents = maxNevents,
                                nWorkers=nWorkers,
-				outFile = "plots_Diego_8-13-15_vtxs.root" )
+				outFile = "plots_DS_test2.root" )
