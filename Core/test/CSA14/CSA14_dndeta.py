@@ -2744,8 +2744,8 @@ if __name__ == "__main__":
     sampleList = None
     maxFilesMC = None
     maxFilesData = None
-    #maxFilesMC = 50
-    #maxFilesData = None
+    #maxFilesMC = 1
+    #maxFilesData = 1
     nWorkers = None
     #nWorkers = 15 # Use all cores
 
@@ -2785,7 +2785,7 @@ if __name__ == "__main__":
                                maxFilesMC = maxFilesMC,
                                maxFilesData = maxFilesData,
                                nWorkers=nWorkers,
-                               outFile = "DATA_8-13-15_eta20_vtxs.root" )
+                               outFile = "DATAv2_8-13-15_eta20_vtxs.root" )
 
 
 
