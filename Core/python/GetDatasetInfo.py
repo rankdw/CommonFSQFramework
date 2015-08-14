@@ -13,7 +13,6 @@ from multiprocessing import Process, Queue
 
 import pickle
 import distutils.spawn
-import subprocess
 
 def validateRootFile(fname, q):
     rootFile = ROOT.TFile.Open(fname,"r")
@@ -194,28 +193,21 @@ def getTreeFilesAndNormalizations(maxFilesMC = None, maxFilesData = None, quiet 
             if localAccess:
                 if not quiet: print tab, "path to trees:",sampleList[s]["pathTrees"]
                 if not quiet: print tab, "path to trees taken from 'sampleList[s][\"pathTrees\"]' variable"
-		if not "eos/cms" in sampleList[s]["pathTrees"]:
-                    for dirpath, dirnames, filenames in os.walk(sampleList[s]["pathTrees"]):
-                        for f in filenames:
-                            if not f.startswith("trees_"): continue
-                            if not f.endswith(".root"): continue
-                            fname = dirpath.replace("//","/") + f   # somehow root doesnt like // at the begining
-                            fileListUnvalidated.add(localROOTPrefix+fname)
-		if "eos/cms" in sampleList[s]["pathTrees"]:
-		    # only works on lxplus...
-		    lscomm = ["xrd", "eoscms", "ls", sampleList[s]["pathTrees"]]
-		    proc = subprocess.Popen(lscomm, stdout=subprocess.PIPE)
-		    for line in iter(proc.stdout.readline,''):
-		        ifile = line.strip()
-			if "trees_" not in ifile: continue
-			if ".root" not in ifile: continue
-			filename = ifile.split("//")[-1]
-			fileListUnvalidated.add("root://eoscms/"+sampleList[s]["pathTrees"]+filename)
-			
+                pathTrees2 = sampleList[s]["pathTrees"]
+                for pathTrees in pathTrees2:
+                  for dirpath, dirnames, filenames in os.walk(pathTrees):
+                    for f in filenames:
+
+                        if not f.startswith("trees_"): continue
+                        if not f.endswith(".root"): continue
+                        fname = dirpath.replace("//","/") + f   # somehow root doesnt like // at the begining
+                        fileListUnvalidated.add(localROOTPrefix+fname)
             elif isXrootdAccess:
-                if not quiet: print tab, "will access trees from:",sampleList[s]["pathSE"]
+              if not quiet: print tab, "will access trees from:",sampleList[s]["pathSE"]
                 # Warning: duplicated from copyAnaData. Fixme
-                pathSE = sampleList[s]["pathSE"]
+              import subprocess
+              pathSE2 = sampleList[s]["pathSE"]
+              for pathSE in pathSE2:
                 cnt = 999
                 offset = 0
                 lastSize = len(fileListUnvalidated)
@@ -310,5 +302,4 @@ if __name__ == "__main__":
     #for s in sam:
     #    print s
     #getTreeFilesAndNormalizations(maxFilesMC = 10, maxFilesData = 10)
-
 
