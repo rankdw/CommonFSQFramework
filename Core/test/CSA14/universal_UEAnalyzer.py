@@ -381,9 +381,40 @@ class universal_UEAnalyzer(CommonFSQFramework.Core.ExampleProofReader.ExamplePro
         bGen_etaLeadTrack[0] = -999
         bGen_phiLeadTrack[0] = -999
         bGen_evtTrue_LeadTrack[0] = -100
+
+        bGen_nChg_pTLeadTrack_away[0]         = 0
+        bGen_nChg_pTLeadTrack_towards[0]      = 0
+        bGen_nChg_pTLeadTrack_trans[0]        = 0
+        bGen_nChg_pTLeadTrack_transMin[0]     = 0
+        bGen_nChg_pTLeadTrack_transMax[0]     = 0
+        bGen_nChg_pTLeadTrack_transDiff[0]    = 0
+        bGen_pTSum_pTLeadTrack_away[0]        = 0
+        bGen_pTSum_pTLeadTrack_towards[0]     = 0
+        bGen_pTSum_pTLeadTrack_trans[0]       = 0
+        bGen_pTSum_pTLeadTrack_transMin[0]    = 0
+        bGen_pTSum_pTLeadTrack_transMax[0]    = 0
+        bGen_pTSum_pTLeadTrack_transDiff[0]   = 0
         #/SUNIL
 
+        #SUNIL
+        bRec_pTLeadTrack[0] = -999
+        bRec_etaLeadTrack[0] = -999
+        bRec_phiLeadTrack[0] = -999
+        bRec_evtTrue_LeadTrack[0] = -100
 
+        bRec_nChg_pTLeadTrack_away[0]         = 0
+        bRec_nChg_pTLeadTrack_towards[0]      = 0
+        bRec_nChg_pTLeadTrack_trans[0]        = 0
+        bRec_nChg_pTLeadTrack_transMin[0]     = 0
+        bRec_nChg_pTLeadTrack_transMax[0]     = 0
+        bRec_nChg_pTLeadTrack_transDiff[0]    = 0
+        bRec_pTSum_pTLeadTrack_away[0]        = 0
+        bRec_pTSum_pTLeadTrack_towards[0]     = 0
+        bRec_pTSum_pTLeadTrack_trans[0]       = 0
+        bRec_pTSum_pTLeadTrack_transMin[0]    = 0
+        bRec_pTSum_pTLeadTrack_transMax[0]    = 0
+        bRec_pTSum_pTLeadTrack_transDiff[0]   = 0
+        #/SUNIL
 
 
 
