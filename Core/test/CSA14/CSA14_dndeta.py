@@ -24,20 +24,30 @@ from ROOT import gSystem
 
 import math
 
+
+
+#sys.stderr = open("eventsDoug.txt", "w")
+
 class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader):
     def init( self):
+
+        #self.eventFile = open("eventsDoug.txt", "w")
+
         #self.triggers   = ["minbias", "zerobias"]
         self.triggers   = ["minbias", ]
         self.variations = ["central"] # only a central value now
         
         self.hist = {}
 
+        #binLowTrackPt[23] = {0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0,6.0,7.0,8.0,10.0,12.0,16.0,20.0,24.0,28.0,32.0,36.0,40.0,50.0};
+        #binLowTrackPt = [0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0,6.0,7.0,8.0,10.0,12.0,16.0,20.0,24.0,28.0,32.0,36.0,40.0,50.0]
 
         histPrefix = "HIST_"
         binHalf = "_bh"
         binOne = "_b1"
         binTwo = "_b2"
 	binFour = "_b4"
+        binNew = "_bnew"
         genPrefix = "GEN_"
 
 
@@ -45,6 +55,24 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
 
         self.maxAvgTrans = 0
 
+        #NEW DIST 10-20-15
+
+
+
+        towardName_DIST = histPrefix+"toward"+binNew
+        awayName_DIST = histPrefix+"away"+binNew
+        transMaxName_DIST = histPrefix+"transMax"+binNew
+        transMinName_DIST = histPrefix+"transMin"+binNew
+        towardNchName_DIST = histPrefix+"towardNch"+binNew
+        awayNchName_DIST = histPrefix+"awayNch"+binNew
+        transMaxNchName_DIST = histPrefix+"transMaxNch"+binNew
+        transMinNchName_DIST = histPrefix+"transMinNch"+binNew
+        transDifName_DIST = histPrefix+"transDif"+binNew
+        transDifNchName_DIST = histPrefix+"transDifNch"+binNew
+        transName_DIST = histPrefix+"trans"+binNew
+        transNchName_DIST = histPrefix+"transNch"+binNew
+        overallName_DIST = histPrefix+"overall"+binNew
+        overallNchName_DIST = histPrefix+"overallNch"+binNew
 
 
         #Nch_response_Name = histPrefix+"Nch_response"
@@ -473,6 +501,65 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
         for t in self.triggers:
             for v in self.variations:
 
+
+                #New Distributions 10-30-15
+
+
+                #Per Xavier's request to include Fig1 plots just for leading track
+                self.hist["LeadTrack_pT"] =  ROOT.TH1F("LeadTrack_pT","LeadTrack_pT", 100, 0, 10)
+                self.hist["LeadTrack_eta"] =  ROOT.TH1F("LeadTrack_eta","LeadTrack_eta", 40, -2, 2)
+                self.hist["LeadTrack_phi"] =  ROOT.TH1F("LeadTrack_phi","LeadTrack_phi", 63, -3.14, 3.14)
+                self.hist["LeadTrack_sigmaXY"] =  ROOT.TH1F("LeadTrack_sigmaXY","LeadTrack_sigmaXY", 200, -20, 20)
+                self.hist["LeadTrack_sigmaZ"] =  ROOT.TH1F("LeadTrack_sigmaZ","LeadTrack_sigmaZ", 200, -20, 20)
+                self.hist["LeadTrack_pTerr"] =  ROOT.TH1F("LeadTrack_pTerr","LeadTrack_pTerr", 20, 0, 0.2)
+
+
+                #To reproduce Figure 1 plots but include multiplicity (for consistent style)
+                self.hist["Track_pT"] =  ROOT.TH1F("Track_pT","Track_pT", 100, 0, 10)
+                self.hist["Track_eta"] =  ROOT.TH1F("Track_eta","Track_eta", 50, -2.5, 2.5)
+                self.hist["Track_phi"] =  ROOT.TH1F("Track_phi","Track_phi", 63, -3.14, 3.14)
+                self.hist["Track_sigmaXY"] =  ROOT.TH1F("Track_sigmaXY","Track_sigmaXY", 200, -20, 20)
+                self.hist["Track_sigmaZ"] =  ROOT.TH1F("Track_sigmaZ","Track_sigmaZ", 200, -20, 20)
+                self.hist["Track_pTerr"] =  ROOT.TH1F("Track_pTerr","Track_pTerr", 20, 0, 0.2)
+                self.hist["Track_Nch"] =  ROOT.TH1F("Track_Nch","Track_Nch", 100, 0, 100)
+
+
+                self.hist[transDifName_DIST] =  ROOT.TH1F(transDifName_DIST,transDifName_DIST, 100, 0, 10)
+                self.hist[transDifNchName_DIST] =  ROOT.TH1F(transDifNchName_DIST,transDifNchName_DIST, 100, 0, 100)
+                self.hist[towardName_DIST] =  ROOT.TH1F(towardName_DIST, towardName_DIST+";toward [pT]",  100,  0, 10)
+                self.hist[awayName_DIST] =  ROOT.TH1F(awayName_DIST, awayName_DIST+";away [pT]",  100,  0, 10)
+                self.hist[transMaxName_DIST] =  ROOT.TH1F(transMaxName_DIST, transMaxName_DIST+";transMax [pT]",  100,  0, 10)
+                self.hist[transMinName_DIST] =  ROOT.TH1F(transMinName_DIST, transMinName_DIST+";transMin [pT]",  100,  0, 10)
+                self.hist[towardNchName_DIST] =  ROOT.TH1F(towardNchName_DIST, towardNchName_DIST+";toward [Nch]",  100,  0, 100)
+                self.hist[awayNchName_DIST] =  ROOT.TH1F(awayNchName_DIST, awayNchName_DIST+";away [Nch]",  100,  0, 100)
+                self.hist[transMaxNchName_DIST] =  ROOT.TH1F(transMaxNchName_DIST, transMaxNchName_DIST+";transMax [Nch]",  100,  0, 100)
+                self.hist[transMinNchName_DIST] =  ROOT.TH1F(transMinNchName_DIST, transMinNchName_DIST+";transMin [Nch]",  100,  0, 100)
+                self.hist[transName_DIST] =  ROOT.TH1F(transName_DIST, transName_DIST+";trans [pT]",  100,  0, 10)
+                self.hist[transNchName_DIST] =  ROOT.TH1F(transNchName_DIST, transNchName_DIST+";trans [Nch]",  100,  0, 100)
+                self.hist[overallName_DIST] =  ROOT.TH1F(overallName_DIST, overallName_DIST+";overall [pT]",  100,  0, 10)
+                self.hist[overallNchName_DIST] =  ROOT.TH1F(overallNchName_DIST, overallNchName_DIST+";overall [Nch]",  100,  0, 100)
+
+                #in case GEN is needed in future
+                """
+                self.hist[transDifName_GEN_DIST] =  ROOT.TProfile(transDifName_GEN_DIST,transDifName_GEN_DIST, 100, 0, 10)
+                self.hist[transDifNchName_GEN_DIST] =  ROOT.TProfile(transDifNchName_GEN_DIST,transDifNchName_GEN_DIST, 100, 0, 100)
+                self.hist[towardName_GEN_DIST] =  ROOT.TH1F(towardName_GEN_DIST, towardName_GEN_DIST+";toward [pT]",  100,  0, 10)
+                self.hist[awayName_GEN_DIST] =  ROOT.TH1F(awayName_GEN_DIST, awayName_GEN_DIST+";away [pT]",  100,  0, 10)
+                self.hist[transMaxName_GEN_DIST] =  ROOT.TH1F(transMaxName_GEN_DIST, transMaxName_GEN_DIST+";transMax [pT]",  100,  0, 10)
+                self.hist[transMinName_GEN_DIST] =  ROOT.TH1F(transMinName_GEN_DIST, transMinName_GEN_DIST+";transMin [pT]",  100,  0, 10)
+                self.hist[towardNchName_GEN_DIST] =  ROOT.TH1F(towardNchName_GEN_DIST, towardNchName_GEN_DIST+";toward [Nch]",  100,  0, 100)
+                self.hist[awayNchName_GEN_DIST] =  ROOT.TH1F(awayNchName_GEN_DIST, awayNchName_GEN_DIST+";away [Nch]",  100,  0, 100)
+                self.hist[transMaxNchName_GEN_DIST] =  ROOT.TH1F(transMaxNchName_GEN_DIST, transMaxNchName_GEN_DIST+";transMax [Nch]",  100,  0, 100)
+                self.hist[transMinNchName_GEN_DIST] =  ROOT.TH1F(transMinNchName_GEN_DIST, transMinNchName_GEN_DIST+";transMin [Nch]",  100,  0, 100)
+                self.hist[transName_GEN_DIST] =  ROOT.TH1F(transName_GEN_DIST, transName_GEN_DIST+";trans [pT]",  100,  0, 10)
+                self.hist[transNchName_GEN_DIST] =  ROOT.TH1F(transNchName_GEN_DIST, transNchName_GEN_DIST+";trans [Nch]",  100,  0, 100)
+                self.hist[overallName_GEN_DIST] =  ROOT.TH1F(overallName_GEN_DIST, overallName_GEN_DIST+";overall [pT]",  100,  0, 10)
+                self.hist[overallNchName_GEN_DIST] =  ROOT.TH1F(overallNchName_GEN_DIST, overallNchName_GEN_DIST+";overall [Nch]",  100,  0, 100)
+                """
+
+
+                #self.hist["eventsGood"] = ROOT.TH1C("eventsGood", "eventsGood", 100000000,100000000,200000000)
+
 		self.hist[nEventsVTX1Name]    = ROOT.TH1F(nEventsVTX1Name, nEventsVTX1Name, 10, 0, 10)
 		self.hist[nEventsVTXSName]    = ROOT.TH1F(nEventsVTXSName, nEventsVTXSName, 10, 0, 10)
 
@@ -563,8 +650,8 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
 
 
                 self.hist[ptMBName] =  ROOT.TH1F(ptMBName, ptMBName+";p_T [GeV]",  100,  0, 50)
-                self.hist[etaMBName] =  ROOT.TH1F(etaMBName, etaMBName+"; #eta",  100, -10, 10)
-                self.hist[etaName] =  ROOT.TH1F(etaName, etaName+"; #eta",  100, -10, 10)
+                self.hist[etaMBName] =  ROOT.TH1F(etaMBName, etaMBName+"; #eta",  200, -10, 10)
+                self.hist[etaName] =  ROOT.TH1F(etaName, etaName+"; #eta",  200, -10, 10)
                 self.hist[ptName] =  ROOT.TH1F(ptName, ptName+";p_T [GeV]",  100,  0, 50)
                 self.hist[delPhiName] =  ROOT.TH1F(delPhiName, delPhiName+";delPhi [deg]",  72,  -180, 180)
                 self.hist[delPhiPtName] =  ROOT.TH1F(delPhiPtName, delPhiPtName+";delPhiPt [Pt deg]",  72,  -180, 180)
@@ -597,6 +684,8 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
 
 
                 #PROFILES
+
+                #self.hist[transDifName_bh] =  ROOT.TProfile(transDifName_bh,transDifName_bh, 22, constants.binLowTrackPt)
 
                 #NEW 10-20-14
                 self.hist[ptMaxName_bh] =  ROOT.TProfile(ptMaxName_bh,ptMaxName_bh, 100, 0, 50)
@@ -884,47 +973,7 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
                 self.hist[overallNchName_b4] =  ROOT.TProfile(overallNchName_b4, overallNchName_b4+";overall [Nch]",  12,  0, 48)
                 self.hist[overallAvgName_b4] =  ROOT.TProfile(overallAvgName_b4, overallAvgName_b4+";overall [Avg pT]",  12,  0, 48)
 
-                #self.Nch_response = RooUnfoldResponse(100, 0, 100, "Nch_response_name", "Nch_response_title");
-                #self.Nch_response2 = RooUnfoldResponse(100, 0, 100, "Nch_response_name2", "Nch_response_title2");
 
-                #self.hist[CUT_TFF_TTF_NchMB_Name] = ROOT.TH2F(CUT_TFF_TTF_NchMB_Name,CUT_TFF_TTF_NchMB_Name, 100, -0.5, 99.5, 100, -99.5, 0.5)
-
-                #self.hist["2DHIST_transAvgName_GEN_bh"] =  ROOT.TH2F("2DHIST_transAvgName_GEN_bh","2DHIST_transAvgName_GEN_bh",  200,  0, 100, 2000, 0, 20);
-
-                #self.hist["2DHIST_transAvgName_bh"] =  ROOT.TH2F("2DHIST_transAvgName_bh","2DHIST_transAvgName_bh",  200,  0, 100, 2000, 0, 20);
-
-
-
-
-                #BE VERY CAREFUL IN ALLOCATING SPACE!!!!  A BIG TH2F TAKES A LOT OF SPACE!!!
-
-                #self.hist["2DHIST_transAvgName_GEN_bh"] =  ROOT.TH2F("2DHIST_transAvgName_GEN_bh","2DHIST_transAvgName_GEN_bh",  100,  0, 50, 50, 0, 10);
-
-                #self.hist["2DHIST_transAvgName_bh"] =  ROOT.TH2F("2DHIST_transAvgName_bh","2DHIST_transAvgName_bh",  100,  0, 50, 50, 0, 10);
-
-                #self.hist["2DHIST_transAvgName_GEN_bh"] =  ROOT.TH2F("2DHIST_transAvgName_GEN_bh","2DHIST_transAvgName_GEN_bh",  100,  0, 50, 20, 0, 10);
-
-                #self.hist["2DHIST_transAvgName_bh"] =  ROOT.TH2F("2DHIST_transAvgName_bh","2DHIST_transAvgName_bh",  100,  0, 50, 20, 0, 10);
-
-                #self.transName_response = RooUnfoldResponse(self.hist["2DHIST_transAvgName_bh"], self.hist["2DHIST_transAvgName_GEN_bh"], "transName_response", "transName_response_title");
-
-
-                #self.hist["2DHIST_transNchName_GEN_bh"] =  ROOT.TH2F("2DHIST_transNchName_GEN_bh","2DHIST_transNchName_GEN_bh",  100,  0, 50, 50, -0.5, 49.5);
-                #self.hist["2DHIST_transNchName_bh"] =  ROOT.TH2F("2DHIST_transNchName_bh","2DHIST_transNchName_bh",  100,  0, 50, 50, -0.5, 49.5);
-
-                #self.transNch_response = RooUnfoldResponse(self.hist["2DHIST_transNchName_bh"], self.hist["2DHIST_transNchName_GEN_bh"], "transNch_Unfold", "transNch_Unfold_title");
-
-
-
-                #self.hist["2DHIST_transName_GEN_bh"] =  ROOT.TH2F("2DHIST_transName_GEN_bh","2DHIST_transName_GEN_bh",  100,  0, 50, 80, 0.5, 20.5);
-                #self.hist["2DHIST_transName_bh"] =  ROOT.TH2F("2DHIST_transName_bh","2DHIST_transName_bh",  100,  0, 50, 80, 0.5, 20.5);
-
-                #self.trans_response = RooUnfoldResponse(self.hist["2DHIST_transName_bh"], self.hist["2DHIST_transName_GEN_bh"], "trans_Unfold", "trans_Unfold_title");
-
-
-
-                #self.trans_response = RooUnfoldResponse(self.hist[transName_bh], self.hist[transName_GEN_bh]);
-                #self.transNch_response = RooUnfoldResponse(self.hist[transNchName_bh], self.hist[transNchName_GEN_bh]);
 
 
 
@@ -962,10 +1011,30 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
         binOne = "_b1"
         binTwo = "_b2"
 	binFour = "_b4"
+        binNew = "_bnew"
         genPrefix = "GEN_"
 
-        ETAMAX = 0.8
+        ETAMAX = 2.0
+	D0DZMAX = 3.0
 	isData = True
+	recoOnly = False
+
+        #NEW DIST 10-30-15
+
+        towardName_DIST = histPrefix+"toward"+binNew
+        awayName_DIST = histPrefix+"away"+binNew
+        transMaxName_DIST = histPrefix+"transMax"+binNew
+        transMinName_DIST = histPrefix+"transMin"+binNew
+        towardNchName_DIST = histPrefix+"towardNch"+binNew
+        awayNchName_DIST = histPrefix+"awayNch"+binNew
+        transMaxNchName_DIST = histPrefix+"transMaxNch"+binNew
+        transMinNchName_DIST = histPrefix+"transMinNch"+binNew
+        transDifName_DIST = histPrefix+"transDif"+binNew
+        transDifNchName_DIST = histPrefix+"transDifNch"+binNew
+        transName_DIST = histPrefix+"trans"+binNew
+        transNchName_DIST = histPrefix+"transNch"+binNew
+        overallName_DIST = histPrefix+"overall"+binNew
+        overallNchName_DIST = histPrefix+"overallNch"+binNew
 
 	nEventsVTX1Name = histPrefix+"nEventsVTX1"
 	nEventsVTXSName = histPrefix+"nEventsVTXS"
@@ -1396,7 +1465,7 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
 
 
 
-        #self.eventCounter += 1
+        self.eventCounter += 1
 
         self.tracks.newEvent(self.fChain)
 
@@ -1424,11 +1493,11 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
                 #histPostfix = "_" + variation + "_" + trg
 
 
-
+		#print "Is this data?", isData
 
                 #WE START AT GEN LEVEL
-		if not isData:
-
+		if not (isData or recoOnly):
+                    #print "So we do GEN"
                     #i_track = 0
                     pTsumToward = 0
                     pTsumTrans1 = 0
@@ -1507,7 +1576,7 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
                         pt =    trackp4.pt()
                         phi = trackp4.phi()
     
-                        #if track.status == 0:
+                        if track.status == 0: continue
                         #    print "GEN PART WITH STATUS 0 @ INDEX", i_track
                         #    continue
     		        if track.charge == 0: continue
@@ -1517,21 +1586,21 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
                         self.hist[pt_all_Name_GEN].Fill(pt, weight)
                         self.hist[eta_all_Name_GEN].Fill(eta, weight)
     
-                        self.hist[phi_all_Name_GEN].Fill(phi, weight)
+                        self.hist[phi_all_Name_GEN].Fill(phi*180/math.pi, weight)
     
                         if math.fabs(eta) <= ETAMAX: 
                             N_eta += 1
                             self.hist[pt_eta_Name_GEN].Fill(pt, weight)
-                            self.hist[phi_eta_Name_GEN].Fill(phi, weight)
+                            self.hist[phi_eta_Name_GEN].Fill(phi*180/math.pi, weight)
     
                         if pt >= 0.5: 
                             self.hist[eta_ptH_Name_GEN].Fill(eta, weight)
-                            self.hist[phi_ptH_Name_GEN].Fill(phi, weight)
+                            self.hist[phi_ptH_Name_GEN].Fill(phi*180/math.pi, weight)
     
                         if math.fabs(eta) <= ETAMAX and pt >= 0.5: 
                             N_etaptH += 1
                             self.hist[pt_etaptH_Name_GEN].Fill(pt, weight)
-                            self.hist[phi_etaptH_Name_GEN].Fill(phi, weight)
+                            self.hist[phi_etaptH_Name_GEN].Fill(phi*180/math.pi, weight)
                             etaptH_inc = True
     
                         if math.fabs(eta) > ETAMAX or pt < 0.5 or track.charge == 0: 
@@ -1813,6 +1882,12 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
                     NchTrans_GEN = NchTrans
 
                 #SIM
+
+
+                #DEBUG MODE
+                #if self.eventCounter%100000 == 0: print "iteration, event", self.eventCounter, self.fChain.event
+                #if(self.fChain.event != 100304082  ): continue;
+
                 #i_track = 0
                 pTsumToward = 0
                 pTsumTrans1 = 0
@@ -1823,6 +1898,9 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
                 NchTrans2 = 0
                 NchAway = 0
                 ptMax = 0
+                ptMaxErrFull = -9999
+                dzMaxFull = -9999
+                d0MaxFull = -9999
 
                 NchTrans = 0
                 pTsumTrans = 0
@@ -1830,15 +1908,16 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
                 Nch = 0
                 pTsum = 0
 
-                #etaphi = 8*math.pi/3
-                #etaphi_half = 4*math.pi/3
-                #etaphi_three = 8*math.pi
+                etaphi = 8*math.pi/3
+                etaphi_half = 4*math.pi/3
+                etaphi_three = 8*math.pi
 
                 #We set the etaphi area to unity and let Rick divide for now
-                etaphi = 1
-                etaphi_half = 1
-                etaphi_three = 1
+                #etaphi = 1
+                #etaphi_half = 1
+                #etaphi_three = 1
 
+                eta_max = 999
                 i_ptMax = -1
                 #i_track = 0
                 firstTime = True
@@ -1922,16 +2001,17 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
 		    if iValid != -1 and i != iValid:
 			self.hist[delzVtxVTXName].Fill( math.fabs(l_vertexZ[iValid] - l_vertexZ[i]) )
 
-
-
+                #DEBUG TEST
+                #print "nvtx", nGood
+                #print "iValid", iValid
 
 		self.hist[nVtxName].Fill(nGood, weight)
 
 		if nGood != 1: vertexGood = False
 
 		#print "vertexGood, nGood", vertexGood, nGood
-		#if vertexGood: self.hist[nVtxVTXName].Fill(nGood, weight)
-		if nGood >= 1: self.hist[nVtxVTXName].Fill(nGood, weight)
+		if vertexGood: self.hist[nVtxVTXName].Fill(nGood, weight)
+		#if nGood >= 1: self.hist[nVtxVTXName].Fill(nGood, weight)
 
 		if nSingle != 1: vertexSingle = False
 
@@ -1958,9 +2038,8 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
 
 		#print "nGood =", nGood
 		#Checking if there is a single vertex will greatly speed up the analysis.  Disabled in order to analyze multiple vertices.
-		#if (vertexSingle):
-		if (iValid != -1):       #At least one good vertex 
-		#if (nGood == 1):         #One and only one good vertex
+		#if (iValid != -1):       #At least one good vertex 
+		if (nGood == 1):         #One and only one good vertex
 		    #print "nGood =", nGood, "after iValid check, which is", iValid
                     for i_track, track in enumerate(self.tracks.get(variation)):
                         #if firstTime == False: i_track += 1
@@ -1974,6 +2053,8 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
                         trackPtErr = True
                         trackd0dz = True
                         trackEta = True
+                        trackd0 = True
+                        trackdz = True
     
                         trackHighPurity = self.fChain.recoTrackshighPurity.at(i_track)
     
@@ -2028,6 +2109,11 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
                         vtx_x_Err = self.fChain.vtxxErr.at(iValid)
                         vtx_y_Err = self.fChain.vtxyErr.at(iValid)
                         vtx_z_Err = self.fChain.vtxzErr.at(iValid)
+
+                        #DEBUG MODE!!!!!!!!!!!!!!!!!!!!!!!!!
+                        #vtx_x_Err = 0
+                        #vtx_y_Err = 0
+                        #vtx_z_Err = 0
     
     
                         #THIS IS EXPERIMENTAL:
@@ -2050,12 +2136,17 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
                         trk_pz = trackp4.pz()
                         trk_pt = trackp4.pt()
     
-                        trk_d0 = (trk_x*trk_py - trk_y*trk_px)/trk_pt
+                        trk_d0 = -(trk_x*trk_py - trk_y*trk_px)/trk_pt
                         trk_dz = trk_z - (trk_x*trk_px+trk_y*trk_py)/trk_pt * trk_pz/trk_pt
     
-                        #Here we add the errors in quadrature to get the the error between the track and the vertex
-                        sigma_xy = math.sqrt(trk_d0_Err**2 + vtx_x_Err**2 + vtx_y_Err**2)
+                        #Here we USED TO add the errors in quadrature to get the the error between the track and the vertex
+			#Now changed to more properly add errors
+                        sigma_xy = math.sqrt(trk_d0_Err**2 + (trk_py*vtx_x_Err/trk_pt)**2 + (trk_px*vtx_y_Err/trk_pt)**2)
                         sigma_z = math.sqrt(trk_dz_Err**2 + vtx_z_Err**2)
+
+			#Temporarily removing fancy error part
+			#sigma_xy = trk_d0_Err
+			#sigma_z = trk_dz_Err
     
                         #if i_track == 0: print "PTMAX LOOP"
                         #print "i_track = ", i_track
@@ -2080,7 +2171,9 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
                         """
     
                         #If the track approach by d0 or dz is greater than three times the error, we drop the track.
-                        if math.fabs(trk_d0/sigma_xy) > 3 or math.fabs(trk_dz/sigma_z) > 3: trackd0dz = False
+                        if math.fabs(trk_d0/sigma_xy) > D0DZMAX or math.fabs(trk_dz/sigma_z) > D0DZMAX: trackd0dz = False
+                        if math.fabs(trk_d0/sigma_xy) > D0DZMAX: trackd0 = False
+                        if math.fabs(trk_dz/sigma_z) > D0DZMAX: trackdz = False
     
                         #print "d0, dz, trackd0dz", math.fabs(trk_d0/sigma_xy), math.fabs(trk_dz/sigma_z), trackd0dz
     
@@ -2121,14 +2214,60 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
     
                         #FIX THIS SLOPPY LINE OF CODE:
                         #if (pt > ptMax) and (trackPt5 and trackPtErr and trackd0dz and trackEta and trackHighPurity and vertexGood):
+                        #DEBUG TEST
+                        #print "VTK TRK KIN pt", VTX, TRK, KIN, pt
                         if VTX and TRK and KIN and (pt > ptMax):
                             #print "Good ptMax track candidate because track bools are", trackPt5, trackPtErr, trackd0dz
                             ptMax = pt
                             phiMax = phi
                             i_ptMax = i_track
+                            eta_max = eta
+
+
+                        #10-30-15
+                        if VTX and TRK and KIN:
+                            self.hist["Track_pT"].Fill(pt, weight)
+                            self.hist["Track_phi"].Fill(phi)
+
+                        if VTX and TRK and trackPt5:
+                            self.hist["Track_eta"].Fill(eta, weight)
+
+                        if VTX and trackd0dz and trackHighPurity and KIN:
+                            self.hist["Track_pTerr"].Fill(self.fChain.recoTracksptErr.at(i_track)/pt, weight)
+
+                        if VTX and trackd0 and trackHighPurity and trackPtErr and KIN:
+                            self.hist["Track_sigmaZ"].Fill(trk_dz/sigma_z)
+
+                        if VTX and trackdz and trackHighPurity and trackPtErr and KIN:
+                            self.hist["Track_sigmaXY"].Fill(trk_d0/sigma_xy)
+
+                        if VTX and trackd0dz and trackHighPurity and KIN and i_ptMax != 0:
+                            ptMaxErrFull = self.fChain.recoTracksptErr.at(i_track)/pt
+
+                        if VTX and trackd0 and trackHighPurity and trackPtErr and KIN and i_ptMax != 0:
+                            dzMaxFull = trk_dz/sigma_z
+
+                        if VTX and trackdz and trackHighPurity and trackPtErr and KIN and i_ptMax != 0:
+                            d0MaxFull = trk_d0/sigma_xy
+
+
+                        #print "EVENT", self.fChain.event
+                        #print "BOOL", VTX, trackd0, trackHighPurity, trackPtErr, KIN, (pt > ptMax)
+                        #print trk_dz, sigma_z, trk_dz/sigma_z, dzMaxFull
+                        #print "i_ptMax", i_ptMax, "\n"
                             #print "and we have a new pTmax!"
 
 			    #print "nGood", nGood
+
+                        #DEBUG TEST
+                        #print "event", self.fChain.event
+                        #print "PTMAX PTMAX PTMAX", ptMax
+                        #print "valid", trackHighPurity
+                        #print "d0sig", math.fabs(trk_d0/sigma_xy), trackd0, d0MaxFull
+                        #print "dzsig", math.fabs(trk_dz/sigma_z), trackdz, dzMaxFull 
+                        #print "eta", eta_max
+                        #print "i_pTmax", i_ptMax
+                        #if not(i_ptMax == -1 or ptMax == 0): print "ptErr", self.fChain.recoTracksptErr.at(i_ptMax)/ptMax
     
                         if (vertexValid and vertexSingle and vertexNotFake):
                             N_FFF += 1
@@ -2181,6 +2320,8 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
                             self.hist[CUT_TTT_eta_Name].Fill( eta, weight)
                             self.hist[CUT_TTT_phi_Name].Fill( phi*180/math.pi+180, weight)
                             good_Nch_TTT.append(i_track)
+
+
     
                             #print "VTX, TRK, KIN, VertexGood, i_track", VTX, TRK, KIN, vertexGood, i_track
     
@@ -2189,6 +2330,12 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
                         #if i_track == 0:
                             #print "Extra info for i_track = 0:"
                             #print trackEta, trackPt5, trackPtErr, trackd0dz, vertexValid, vertexSingle, vertexThreeTracks, vertexInTen, vertexNdof, vertexChi2, vertexGood, VTX, TRK, KIN
+
+                    #10-30-15
+                    if ptMaxErrFull != -9999: self.hist["LeadTrack_pTerr"].Fill(ptMaxErrFull, weight )
+                    if d0MaxFull != -9999: self.hist["LeadTrack_sigmaXY"].Fill(d0MaxFull)
+                    if dzMaxFull != -9999: self.hist["LeadTrack_sigmaZ"].Fill(dzMaxFull)
+                    self.hist["Track_Nch"].Fill(N_TTT)
     
 		    if N_TTT >= 1: 
     			if nGood == 1: self.hist[nEventsVTX1Name].Fill(1, weight)
@@ -2308,7 +2455,7 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
                         #print "i_track = ", i_track
                         #print "d0 and dz:", math.fabs(trk_d0/sigma_xy), math.fabs(trk_dz/sigma_z)
                         
-                        if math.fabs(trk_d0/sigma_xy) > 3 or math.fabs(trk_dz/sigma_z) > 3: 
+                        if math.fabs(trk_d0/sigma_xy) > D0DZMAX or math.fabs(trk_dz/sigma_z) > D0DZMAX: 
                             #print "Bad track because sigmas are:", math.fabs(trk_d0/sigma_xy), math.fabs(trk_dz/sigma_z)
                             continue
     
@@ -2322,7 +2469,7 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
                             continue
     
     
-                        self.hist[phi_etaptH_Name].Fill(phi, weight)
+                        self.hist[phi_etaptH_Name].Fill(phi*180/math.pi, weight)
     
                         if i_track == i_ptMax:
                             #print "i_track and i_ptMax are equal"
@@ -2341,6 +2488,19 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
                             self.hist[ptMaxName_b1].Fill(ptMax, ptMax, weight)
                             self.hist[ptMaxName_b2].Fill(ptMax, ptMax, weight)
                             self.hist[ptMaxName_b4].Fill(ptMax, ptMax, weight)
+
+
+                            #10-30-15
+                            self.hist["LeadTrack_pT"].Fill(pt, weight)
+                            self.hist["LeadTrack_eta"].Fill(eta, weight)
+                            self.hist["LeadTrack_phi"].Fill(phiMax, weight)
+
+
+
+
+                            #This is moved up so that it will be filled below 0.5
+                            #self.hist["LeadTrack_pTerr"].Fill
+
     
                             self.hist[phiMaxName].Fill(phiMax*180/math.pi, weight)
                             if ptMax > 5: self.hist[phiMaxName_pt5].Fill(phiMax*180/math.pi, weight)
@@ -2447,7 +2607,12 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
     
     
                     if N_pTmax == 0: continue
-    
+                    #self.eventFile.write( str(self.fChain.event) )
+                    #self.eventFile.write('\n')
+
+                    #print str(self.fChain.event)
+                    #print '\n'
+                    #sys.stderr.write( str(self.fChain.event) + '\n' )
     
                     NchMB_check = Nch + 1
                     if (NchMB_check) != N_TTT_save:
@@ -2552,10 +2717,23 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
                     self.hist[overallTotalName_b4].Fill(ptMax, (pTsum+ptMax)/(etaphi_three), weight)
                     self.hist[overallTotalNchName_b4].Fill(ptMax, (Nch+1)/(etaphi_three), weight)
                     if Nch != 0: self.hist[overallTotalAvgName_b4].Fill(ptMax, ( (pTsum+ptMax)/(Nch+1) ), weight)
-    
+
+                    #10-30-15
+                    self.hist[towardName_DIST].Fill(pTsumToward, weight)
+                    self.hist[awayName_DIST].Fill(pTsumAway, weight)
+                    self.hist[towardNchName_DIST].Fill(NchToward, weight)
+                    self.hist[awayNchName_DIST].Fill(NchAway, weight)
+                    self.hist[transName_DIST].Fill(pTsumTrans, weight)
+                    self.hist[transNchName_DIST].Fill(NchTrans, weight)
+                    self.hist[overallName_DIST].Fill(pTsum, weight)
+                    self.hist[overallNchName_DIST].Fill(Nch, weight)
+                    self.hist[transDifName_DIST].Fill(math.fabs(pTsumTrans1-pTsumTrans2))
+                    self.hist[transDifNchName_DIST].Fill(math.fabs(NchTrans1-NchTrans2))
     
     
                     if pTsumTrans1 > pTsumTrans2:
+                        self.hist[transMaxName_DIST].Fill(pTsumTrans1, weight) # always use weight when filling
+                        self.hist[transMinName_DIST].Fill(pTsumTrans2, weight) # always use weight when filling
                         self.hist[transMaxName_bh].Fill(ptMax, pTsumTrans1/(etaphi_half), weight) # always use weight when filling
                         self.hist[transMinName_bh].Fill(ptMax, pTsumTrans2/(etaphi_half), weight) # always use weight when filling
                         self.hist[transMaxName_b1].Fill(ptMax, pTsumTrans1/(etaphi_half), weight) # always use weight when filling
@@ -2565,6 +2743,8 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
                         self.hist[transMaxName_b4].Fill(ptMax, pTsumTrans1/(etaphi_half), weight) # always use weight when filling
                         self.hist[transMinName_b4].Fill(ptMax, pTsumTrans2/(etaphi_half), weight) # always use weight when filling
                     else:
+                        self.hist[transMinName_DIST].Fill(pTsumTrans1, weight) # always use weight when filling
+                        self.hist[transMaxName_DIST].Fill(pTsumTrans2, weight) # always use weight when filling
                         self.hist[transMinName_bh].Fill(ptMax, pTsumTrans1/(etaphi_half), weight) # always use weight when filling
                         self.hist[transMaxName_bh].Fill(ptMax, pTsumTrans2/(etaphi_half), weight) # always use weight when filling
                         self.hist[transMinName_b1].Fill(ptMax, pTsumTrans1/(etaphi_half), weight) # always use weight when filling
@@ -2593,6 +2773,8 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
                     self.hist[transDifNchName_b4].Fill(ptMax, math.fabs(NchTrans1-NchTrans2)/(etaphi_half), weight)
     
                     if NchTrans1 > NchTrans2:
+                        self.hist[transMaxNchName_DIST].Fill(NchTrans1, weight) # always use weight when filling
+                        self.hist[transMinNchName_DIST].Fill(NchTrans2, weight) # always use weight when filling
                         self.hist[transMaxNchName_bh].Fill(ptMax, NchTrans1/(etaphi_half), weight) # always use weight when filling
                         self.hist[transMinNchName_bh].Fill(ptMax, NchTrans2/(etaphi_half), weight) # always use weight when filling
                         self.hist[transMaxNchName_b1].Fill(ptMax, NchTrans1/(etaphi_half), weight) # always use weight when filling
@@ -2602,6 +2784,8 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
                         self.hist[transMaxNchName_b4].Fill(ptMax, NchTrans1/(etaphi_half), weight) # always use weight when filling
                         self.hist[transMinNchName_b4].Fill(ptMax, NchTrans2/(etaphi_half), weight) # always use weight when filling
                     else:
+                        self.hist[transMinNchName_DIST].Fill(NchTrans1, weight) # always use weight when filling
+                        self.hist[transMaxNchName_DIST].Fill(NchTrans2, weight) # always use weight when filling
                         self.hist[transMinNchName_bh].Fill(ptMax, NchTrans1/(etaphi_half), weight) # always use weight when filling
                         self.hist[transMaxNchName_bh].Fill(ptMax, NchTrans2/(etaphi_half), weight) # always use weight when filling
                         self.hist[transMinNchName_b1].Fill(ptMax, NchTrans1/(etaphi_half), weight) # always use weight when filling
@@ -2610,6 +2794,8 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
                         self.hist[transMaxNchName_b2].Fill(ptMax, NchTrans2/(etaphi_half), weight) # always use weight when filling
                         self.hist[transMinNchName_b4].Fill(ptMax, NchTrans1/(etaphi_half), weight) # always use weight when filling
                         self.hist[transMaxNchName_b4].Fill(ptMax, NchTrans2/(etaphi_half), weight) # always use weight when filling
+
+                    #self.hist["eventsGood"].Fill(self.fChain.event)
 
 
                 #The """ commented part is KINDA how this is done.  Anything else is testing to figure out why it crashes.
@@ -2651,8 +2837,8 @@ class CSA14_dndeta(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader
         print "Finalize:"
         normFactor = self.getNormalizationFactor()
         print "  isData", self.isData
-
-
+	print "MAKE SURE YOU HAVE THE LUMI CHECK ACTIVATED FOR DATA!  IT IS MANUALLY DISABLED FOR MC!"
+        #self.eventFile.close()
 
 
         #Temporarily commented out because it takes a LOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOONG time.
@@ -2746,8 +2932,9 @@ if __name__ == "__main__":
     maxFilesData = None
     #maxFilesMC = 1
     #maxFilesData = 1
-    nWorkers = None
-    #nWorkers = 15 # Use all cores
+    nWorkers = 16
+    maxNevents = -1
+    #nWorkers = 1 # Use all cores
 
     quickTest = False
     #quickTest = True
@@ -2760,6 +2947,7 @@ if __name__ == "__main__":
         maxFilesData = 1
         nWorkers = 1
 	nWorkers = None
+        #maxNevents = 20
 
     # another possibility to process bit faster: process only part of MC
     #maxFilesMC = 4
@@ -2784,8 +2972,13 @@ if __name__ == "__main__":
                                sampleList=sampleList,
                                maxFilesMC = maxFilesMC,
                                maxFilesData = maxFilesData,
+                               maxNevents = maxNevents,
                                nWorkers=nWorkers,
-                               outFile = "DATAv2_8-13-15_eta20_vtxs.root" )
+                               outFile = "MC_NoPU_2-26-16.root")
+
+				#THIS WAS RUN ON THE NO PILE UP MC SO BE SURE TO CHANGE THE NAME!
+
+
 
 
 
