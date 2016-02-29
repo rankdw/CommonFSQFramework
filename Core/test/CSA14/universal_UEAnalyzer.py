@@ -57,13 +57,16 @@ bGen_evtTrue_LeadTrack = array("f",[0])
 class universal_UEAnalyzer(CommonFSQFramework.Core.ExampleProofReader.ExampleProofReader):
     def init( self):
 
-        self.jetMode = False #DR
-        self.dataMode = False #DR for lumi and trigger at the moment
+        self.jetMode = False #DR (if analyzing by leading jet)
+        self.dataMode = False #DR (if running on Data, due to lumi and trigger check)
+	self.genMode = False #DR (if only running on GEN MC)
+	self.nogenMode = True #DR (if only running on RECO MC)
 
-        #TODO: *************BEAMSPOT IS NOT IMPLEMENTED RIGHT NOW****************
-        #TODO: *************NEED SWITCHES FOR MONTE CARLO RECO+GEN OR JUST GEN AND DATA****************
+        #TODO: *************BEAMSPOT IMPLEMENTED BUT NOT CHECKED YET****************
         #TODO: *************JET (ESPECIALLY) AND TRACK NEEDS TO BE VALIDATED****************
         #TODO: *************NOTE THAT I HAVE DISABLED NORMALIZATION OF PROFILES AND HISTOGRAMS*********
+        #TODO: *************NEED EXPLICIT VERIFICATION OF PARTICLE STATUS IN GEN********
+
 
         self.tree = ROOT.TTree("tree","ueAnalysis")
         self.tree.Branch('bRec_pTLeadTrack',   bRec_pTLeadTrack,'bRec_pTLeadTrack/F')
@@ -117,6 +120,9 @@ class universal_UEAnalyzer(CommonFSQFramework.Core.ExampleProofReader.ExamplePro
         self.hist_full_gentracks = {}
         self.Trans_SisCon5 = {}
         self.other_SisCon5 = {}
+
+        #self.hist["eventsGood"] = ROOT.TH1C("eventsGood", "eventsGood", 100000000,100000000,200000000)
+
      
 	self.hist_full_genjet["fgen_ptSisCone5"] =  ROOT.TH1F("fgen_pt_SisCone5",   "ptTrackJets",  200, 0, 200)
         self.hist_full_genjet["fgen_etaSisCone5"] =  ROOT.TH1F("fgen_eta_SisCone5",   "etaTrackJets",  100 , -5, 5)
@@ -516,56 +522,63 @@ class universal_UEAnalyzer(CommonFSQFramework.Core.ExampleProofReader.ExamplePro
         vtx_y=0
 	vtx_z=0
 
+
         #DR
-        #JET MODE
-        if self.jetMode:
-            leadObjSize = self.fChain.sisCone5ChgGenJetsp4.size()
-            leadObjp4 = self.fChain.sisCone5ChgGenJetsp4
-            nJetTracks = self.fChain.sisCone5ChgGenJetsnConst
-            ptMin = 1
-        #TRACK MODE
-        else:
-            leadObjSize = self.fChain.genParticlesp4.size()
-            leadObjp4 = self.fChain.genParticlesp4
-            nJetTracks = self.fChain.genParticlespdg #This is a bit of an awkward placeholder for an observable tracks don't need.
-            ptMin = 0.5
 
-	#LEADING OBJECT LOOP
-	for i in xrange(0, leadObjSize): #DR
+	goAhead = True
+	if self.dataMode: goAhead = False
+        if self.nogenMode: goAhead = False
 
-                    #JET MODE   BUG? SHOULD THIS CHECK KINEMATICS?
-                    if self.jetMode:
-                        trackp4 = leadObjp4.at(i) #DR
-                        if trackp4.pt()>ptf:
-                            ptf=trackp4.pt()
-                            phif=trackp4.phi()
-                            etaf=trackp4.eta()
+	if goAhead:
+            #JET MODE
+            if self.jetMode:
+                leadObjSize = self.fChain.sisCone5ChgGenJetsp4.size()
+                leadObjp4 = self.fChain.sisCone5ChgGenJetsp4
+                nJetTracks = self.fChain.sisCone5ChgGenJetsnConst
+                ptMin = 1
+            #TRACK MODE
+            else:
+                leadObjSize = self.fChain.genParticlesp4.size()
+                leadObjp4 = self.fChain.genParticlesp4
+                nJetTracks = self.fChain.genParticlespdg #This is a bit of an awkward placeholder for an observable tracks don't need.
+                ptMin = 0.5
 
-                    #TRACK MODE
-                    if not self.jetMode:
-                        track = leadObjp4.at(i) #DR
-                        if track.pt()>0.5 and math.fabs(track.eta())<2. and not self.fChain.genParticlescharge == 0:
-                            if track.pt()>ptf:
-                                ptf=track.pt()
-                                phif=track.phi()
-                                etaf=track.eta()
+	    #LEADING OBJECT LOOP
+	    for i in xrange(0, leadObjSize): #DR
 
-        #/LEADING OBJECT LOOP
+               #JET MODE   BUG? SHOULD THIS CHECK KINEMATICS?
+               if self.jetMode:
+                   trackp4 = leadObjp4.at(i) #DR
+                   if trackp4.pt()>ptf:
+                       ptf=trackp4.pt()
+                       phif=trackp4.phi()
+                       etaf=trackp4.eta()
+
+               #TRACK MODE
+               if not self.jetMode:
+                   track = leadObjp4.at(i) #DR
+                   if track.pt()>0.5 and math.fabs(track.eta())<2. and not self.fChain.genParticlescharge == 0:
+                       if track.pt()>ptf:
+                           ptf=track.pt()
+                           phif=track.phi()
+                           etaf=track.eta()
+
+            #/LEADING OBJECT LOOP
 
 
 
-	self.hist_full_jet["f_ptSisCone5"].Fill(ptf)
-        self.hist_full_jet["f_phiSisCone5"].Fill(phif)
-        self.hist_full_jet["f_etaSisCone5"].Fill(etaf)
+	    self.hist_full_jet["f_ptSisCone5"].Fill(ptf)
+            self.hist_full_jet["f_phiSisCone5"].Fill(phif)
+            self.hist_full_jet["f_etaSisCone5"].Fill(etaf)
 
-        #print "one", ptf
+            #print "one", ptf
 
-        if True:
-            iptf = -1
-            ptf = 0
+            if True:
+                iptf = -1
+                ptf = 0
 
-            ###
-	    for i in xrange(0, leadObjp4.size()): #DR # SisCone5
+                ###
+                for i in xrange(0, leadObjp4.size()): #DR # SisCone5
                     trackp4 = leadObjp4.at(i) #DR
 
                     if True:  #DR
@@ -707,10 +720,7 @@ class universal_UEAnalyzer(CommonFSQFramework.Core.ExampleProofReader.ExamplePro
                  bGen_pTSum_pTLeadTrack_transDiff[0]   = -sumpt_min_gen + sumpt_max_gen
                  bGen_evtTrue_LeadTrack[0]             = 100
 
-
-
-
-
+             #END GEN
 
 
 
@@ -741,11 +751,16 @@ class universal_UEAnalyzer(CommonFSQFramework.Core.ExampleProofReader.ExamplePro
 
 
         #RECO
+
         goAhead = False
         if self.dataMode: 
             goAhead = self.fChain.lumi >= 90 and self.fChain.trgZeroBias == 1
         else:
             goAhead = True
+        if self.genMode: goAhead = False
+
+        #DEBUG:
+        #if(self.fChain.event != 100304082 ): goAhead = False;
 
         if goAhead:  
          #self.eventCounter += 1
@@ -757,13 +772,16 @@ class universal_UEAnalyzer(CommonFSQFramework.Core.ExampleProofReader.ExamplePro
 
 		    nu=nu+1	
 
-                    #DR: WE MUST REMEMBER TO ADD BEAMSPOT FOR DATA/NEW MONTE CARLO
-                    if not self.fChain.vtxisFake.at(i) and abs(self.fChain.vtxz.at(i)) <= 10 and self.fChain.vtxndof.at(i) > 4 and vtxrho <= 2: # count only good primary vertices
+                    if not self.fChain.vtxisFake.at(i) and abs(self.fChain.vtxz.at(i) - self.fChain.vtxzBS.at(i) ) <= 10 and self.fChain.vtxndof.at(i) > 4 and vtxrho <= 2: # count only good primary vertices
                         numgoodvtx+=1
 			if numgoodvtx==1:
 			 vtx_x=self.fChain.vtxx.at(i)
 			 vtx_y=self.fChain.vtxy.at(i)
 			 vtx_z=self.fChain.vtxz.at(i)
+			 vtx_x_Err=self.fChain.vtxxErr.at(i)
+			 vtx_y_Err=self.fChain.vtxyErr.at(i)
+			 vtx_z_Err=self.fChain.vtxzErr.at(i)
+
 			self.hist_vertex["ndfVtx"].Fill(self.fChain.vtxndof.at(i))	
         self.hist_vertex["nVtx"].Fill(numgoodvtx) 
 
@@ -828,7 +846,8 @@ class universal_UEAnalyzer(CommonFSQFramework.Core.ExampleProofReader.ExamplePro
             ptMin = 0.5
 
 	#LEADING OBJECT LOOP
-	for i in xrange(0, leadObjSize): #DR
+        if numgoodvtx == 1:
+            for i in xrange(0, leadObjSize): #DR
 
                     #JET MODE
                     if self.jetMode:
@@ -841,8 +860,10 @@ class universal_UEAnalyzer(CommonFSQFramework.Core.ExampleProofReader.ExamplePro
                     #TRACK MODE
                     if not self.jetMode:
 		        track = self.fChain.recoTracksp4.at(i)
-                        l_trd0Err.append( self.fChain.recoTracksd0Err.at(i) )
-	                l_trdzErr.append( self.fChain.recoTracksdzErr.at(i) )	
+			#Implemented new d0Err calculation 9-17-15
+			sigma_d0_v_2= (track.py()*vtx_x_Err/track.pt())**2 + (track.px()*vtx_y_Err/track.pt())**2
+                        l_trd0Err.append( math.sqrt( (self.fChain.recoTracksd0Err.at(i))**2 +  sigma_d0_v_2) )
+	                l_trdzErr.append( math.sqrt( (self.fChain.recoTracksdzErr.at(i))**2 + vtx_z_Err**2 ) )	
                         l_trptErr.append( self.fChain.recoTracksptErr.at(i) )
 
 	                l_trx.append( self.fChain.recoTracksvx.at(i) )
@@ -861,11 +882,12 @@ class universal_UEAnalyzer(CommonFSQFramework.Core.ExampleProofReader.ExamplePro
 
                         l_trGood.append( 0 )
 
-		        if math.fabs(l_trd0[i]/l_trd0Err[i])<3:
-		            if math.fabs(l_trdz[i]/l_trdzErr[i])<3:
+		        if math.fabs(l_trd0[i]/l_trd0Err[i])<2:
+		            if math.fabs(l_trdz[i]/l_trdzErr[i])<2:
 		                if l_trptErr[i]/track.pt()<0.05:
-		                    if track.pt()>0.5 and math.fabs(track.eta())<2.:	#DR: I have to be careful with this!
-                                        l_trGood[i] = 1
+                                    if l_trHighPurity[i]:
+		                        if track.pt()>0.5 and math.fabs(track.eta())<2.:	#DR: I have to be careful with this!
+                                            l_trGood[i] = 1
 
                         if l_trGood[i]:
                             if track.pt()>ptf:
@@ -884,7 +906,9 @@ class universal_UEAnalyzer(CommonFSQFramework.Core.ExampleProofReader.ExamplePro
 	self.hist_full_jet["f_ptSisCone5"].Fill(ptf)
         self.hist_full_jet["f_phiSisCone5"].Fill(phif)
         self.hist_full_jet["f_etaSisCone5"].Fill(etaf)
-        if numgoodvtx >= 1:
+
+	#PARTICLE LOOP
+        if numgoodvtx == 1:
             iptf = -1
             ptf = 0
             ###
@@ -934,9 +958,10 @@ class universal_UEAnalyzer(CommonFSQFramework.Core.ExampleProofReader.ExamplePro
 
                   #JET MODE
                   if self.jetMode:
-		      tr_d0Err=self.fChain.recoTracksd0Err.at(i)
-		      tr_dzErr=self.fChain.recoTracksdzErr.at(i) 	
-		      tr_ptErr=self.fChain.recoTracksptErr.at(i)	
+	      	      sigma_d0_v_2= (track.py()*vtx_x_Err/track.pt())**2 + (track.px()*vtx_y_Err/track.pt())**2
+		      tr_d0Err= math.sqrt( self.fChain.recoTracksd0Err.at(i)**2 + sigma_d0_v_2 )
+		      tr_dzErr= math.sqrt( self.fChain.recoTracksdzErr.at(i)**2 + vtx_z_Err**2 ) 	
+		      tr_ptErr= self.fChain.recoTracksptErr.at(i)	
 
 		      tr_x=self.fChain.recoTracksvx.at(i)
 		      tr_y=self.fChain.recoTracksvy.at(i)		
@@ -960,6 +985,18 @@ class universal_UEAnalyzer(CommonFSQFramework.Core.ExampleProofReader.ExamplePro
 		      tr_d0=l_trd0[i]
 
 	              tr_dz=l_trdz[i]
+
+                      #DEBUG TEST
+                      #print "event", self.fChain.event
+                      #print "pTmax", ptf
+                      #print "pT   ", track.pt()
+                      #print "purity", self.fChain.recoTrackshighPurity.at(i)
+                      #print "d0sig", math.fabs(tr_d0/tr_d0Err)
+                      #print "dzsig", math.fabs(tr_dz/tr_dzErr)
+                      #print "eta", etaf
+                      #print "i_pTmax", i_ptMax
+                      #if not(ptf == -1): print "ptErr", self.fChain.recoTracksptErr.at(i)/track.pt()
+
 
 
 
@@ -989,9 +1026,9 @@ class universal_UEAnalyzer(CommonFSQFramework.Core.ExampleProofReader.ExamplePro
 		  self.hist_pre["trackDeltaPhi"].Fill(dphi)
 		  if self.fChain.recoTrackshighPurity.at(i):
 		   #purity=1	
-		   if math.fabs(tr_d0/tr_d0Err)<3:
+		   if math.fabs(tr_d0/tr_d0Err)<2:
 		    # imp0=1	
-		     if math.fabs(tr_dz/tr_dzErr)<3:
+		     if math.fabs(tr_dz/tr_dzErr)<2:
 		     # impz=1	
 		      if tr_ptErr/track.pt()<0.05:
 		       #dpt=1	
@@ -1096,6 +1133,9 @@ class universal_UEAnalyzer(CommonFSQFramework.Core.ExampleProofReader.ExamplePro
                  self.hist_away["ptAway_SisCone5"].Fill(sumpt_away,ptf)
 		 self.Trans_SisCon5["ptAway"].Fill(ptf,sumpt_away)	
 
+                 #self.hist["eventsGood"].Fill(self.fChain.event)
+
+
                  #SUNIL
                  bRec_nChg_pTLeadTrack_away[0]         = n_away
                  bRec_nChg_pTLeadTrack_towards[0]      = n_tow
@@ -1134,7 +1174,7 @@ class universal_UEAnalyzer(CommonFSQFramework.Core.ExampleProofReader.ExamplePro
 
 
         #DR DR DR DR commented out to test as my analysis does not scale
-        """
+        
 	for h in self.Trans_SisCon5:
            self.Trans_SisCon5[h].Scale(3/(2*4*math.pi))
 	for h in self.other_SisCon5:
@@ -1142,7 +1182,7 @@ class universal_UEAnalyzer(CommonFSQFramework.Core.ExampleProofReader.ExamplePro
 
         for h in self.hist:
             self.hist[h].Scale(normFactor)
-        """
+        
 
     def finalizeWhenMerged(self):
         #
@@ -1166,12 +1206,12 @@ if __name__ == "__main__":
     # Run printTTree.py alone to get the samples list
     #sampleList = []
     #sampleList.append("QCD_Pt-15to3000_TuneZ2star_Flat_HFshowerLibrary_7TeV_pythia6")
-    #maxFilesMC = 1
-    #maxFilesData = 1
+    maxFilesMC = 2
+    maxFilesData = 2
     #nWorkers = 1
     maxNevents = -1
     #maxFilesData = 1
-    #nWorkers =12 
+    nWorkers =1
     # '''
 
 
@@ -1187,6 +1227,6 @@ if __name__ == "__main__":
                                maxFilesData = maxFilesData,
                                maxNevents = maxNevents,
                                nWorkers=nWorkers,
-				outFile = "MC_universal_tracks_8-14-15.root" )
+			       outFile = "MC_10-10-15_uni_d0dz2.root" )
 
 
